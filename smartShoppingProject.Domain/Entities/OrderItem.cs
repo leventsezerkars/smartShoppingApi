@@ -8,7 +8,10 @@ using smartShoppingProject.Domain.ValueObjects;
 /// </summary>
 public sealed class OrderItem
 {
-    internal OrderItem(Guid id, Guid productId, Money unitPrice, int quantity)
+    /// <summary>
+    /// Aggregate içi ve persistence materialization için.
+    /// </summary>
+    public OrderItem(Guid id, Guid productId, Money unitPrice, int quantity)
     {
         if (id == Guid.Empty)
         {

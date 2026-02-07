@@ -1,5 +1,6 @@
 namespace smartShoppingProject.Application.Orders.Commands.CreateOrder;
 
+using smartShoppingProject.Application.Abstractions.Logging;
 using smartShoppingProject.Application.Abstractions.Repositories;
 using smartShoppingProject.Application.Common.Responses;
 using smartShoppingProject.Domain.Entities;
@@ -9,19 +10,22 @@ using MediatR;
 
 /// <summary>
 /// Sipariş oluşturma use-case orkestrasyonu. Response&lt;T&gt; döner; domain/infrastructure detayı sızdırmaz.
-/// UnitOfWork handler içinde çağrılmaz; TransactionBehavior sorumludur.
+/// Başarılı oluşturma business log'a yazılır (IBusinessLogger); teknik hatalar ILogger ile Serilog'a gider.
 /// </summary>
 public sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Response<CreateOrderResponse>>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
+    private readonly IBusinessLogger _businessLogger;
 
     public CreateOrderCommandHandler(
         IOrderRepository orderRepository,
-        IProductRepository productRepository)
+        IProductRepository productRepository,
+        IBusinessLogger businessLogger)
     {
         _orderRepository = orderRepository;
         _productRepository = productRepository;
+        _businessLogger = businessLogger;
     }
 
     public async Task<Response<CreateOrderResponse>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -47,6 +51,16 @@ public sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderComma
         {
             var order = Order.Create(request.CustomerId, itemsWithPrice);
             _orderRepository.Add(order);
+
+            await _businessLogger.LogBusinessEventAsync(
+                entityName: "Order",
+                entityId: order.Id,
+                action: "OrderCreated",
+                context: new { CustomerId = request.CustomerId, ItemCount = request.Items.Count },
+                correlationId: null,
+                createdAtUtc: DateTime.UtcNow,
+                cancellationToken);
+
             return Response<CreateOrderResponse>.Ok(new CreateOrderResponse(order.Id, order.Status.ToString()));
         }
         catch (DomainException ex)

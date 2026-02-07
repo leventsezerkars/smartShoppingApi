@@ -10,12 +10,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.12" />
+    <PackageReference Include="Serilog" Version="4.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\smartShoppingProject.Application\smartShoppingProject.Application.csproj" />
     <ProjectReference Include="..\smartShoppingProject.Domain\smartShoppingProject.Domain.csproj" />
+    <ProjectReference Include="..\smartShoppingProject.Infrastructure\smartShoppingProject.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

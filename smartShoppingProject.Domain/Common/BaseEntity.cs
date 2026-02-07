@@ -13,6 +13,11 @@ public abstract class BaseEntity
 
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
+    /// <summary>
+    /// EF Core materialization için; türeyen sınıfların parameterless ctor'u bunu çağırır.
+    /// </summary>
+    protected BaseEntity() { }
+
     protected BaseEntity(Guid id)
     {
         if (id == Guid.Empty)

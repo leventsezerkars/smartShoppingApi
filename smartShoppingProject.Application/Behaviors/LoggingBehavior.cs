@@ -4,7 +4,8 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 
 /// <summary>
-/// Command ve query başlangıç/bitiş log'ları. İş detayına girilmez.
+/// Sadece teknik hata (exception) loglanır. Giriş/çıkış ve iş logları atılmaz;
+/// business anlamı olan noktalar IBusinessLogger ile handler içinde loglanır.
 /// </summary>
 public sealed class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
@@ -18,18 +19,13 @@ public sealed class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRe
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var requestName = typeof(TRequest).Name;
-        _logger.LogInformation("Başlatılıyor: {RequestName}", requestName);
-
         try
         {
-            var response = await next();
-            _logger.LogInformation("Tamamlandı: {RequestName}", requestName);
-            return response;
+            return await next();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Hata: {RequestName}", requestName);
+            _logger.LogError(ex, "Hata: {RequestName}", typeof(TRequest).Name);
             throw;
         }
     }

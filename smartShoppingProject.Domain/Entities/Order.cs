@@ -14,6 +14,16 @@ public sealed class Order : AggregateRoot
     private readonly List<OrderItem> _items = new();
     private Currency _currency = Currency.TRY;
 
+    /// <summary>
+    /// EF Core materialization için; iş kuralları için kullanılmaz.
+    /// </summary>
+    private Order() { }
+
+    /// <summary>
+    /// Persistence tarafından yükleme için para birimi; iş kuralları _currency kullanır.
+    /// </summary>
+    public Currency Currency { get => _currency; private set => _currency = value; }
+
     private Order(Guid id, Guid customerId)
         : base(id)
     {

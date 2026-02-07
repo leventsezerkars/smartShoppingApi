@@ -7,6 +7,11 @@ using smartShoppingProject.Domain.ValueObjects;
 
 public sealed class Product : AggregateRoot
 {
+    /// <summary>
+    /// EF Core materialization için; iş kuralları için kullanılmaz.
+    /// </summary>
+    private Product() { }
+
     public Product(
         Guid id,
         string name,

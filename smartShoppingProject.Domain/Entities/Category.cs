@@ -5,6 +5,11 @@ using smartShoppingProject.Domain.Exceptions;
 
 public sealed class Category : BaseEntity
 {
+    /// <summary>
+    /// EF Core materialization için; iş kuralları için kullanılmaz.
+    /// </summary>
+    private Category() { }
+
     public Category(Guid id, string name, bool isActive = true)
         : base(id)
     {

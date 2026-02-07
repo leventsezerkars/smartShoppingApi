@@ -3,12 +3,13 @@ namespace smartShoppingProject.Application;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using smartShoppingProject.Application.Abstractions.Events;
 using smartShoppingProject.Application.Behaviors;
+using smartShoppingProject.Application.Events;
 using System.Reflection;
 
 /// <summary>
-/// Application katmanı DI kayıtları. MediatR, pipeline behavior'lar, FluentValidation.
-/// Infrastructure referansı eklenmez; interface'ler burada tanımlı, implementasyon API/Infrastructure'da register edilir.
+/// Application katmanı DI kayıtları. MediatR, pipeline behavior'lar, FluentValidation, event mapper.
 /// </summary>
 public static class DependencyInjection
 {
@@ -18,6 +19,8 @@ public static class DependencyInjection
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
         services.AddValidatorsFromAssembly(assembly);
+
+        services.AddScoped<IDomainEventToNotificationMapper, DomainEventToNotificationMapper>();
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
