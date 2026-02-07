@@ -1,0 +1,36 @@
+namespace smartShoppingProject.Application.Behaviors;
+
+using MediatR;
+using Microsoft.Extensions.Logging;
+
+/// <summary>
+/// Command ve query başlangıç/bitiş log'ları. İş detayına girilmez.
+/// </summary>
+public sealed class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
+{
+    private readonly ILogger<LoggingBehavior<TRequest, TResponse>> _logger;
+
+    public LoggingBehavior(ILogger<LoggingBehavior<TRequest, TResponse>> logger)
+    {
+        _logger = logger;
+    }
+
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    {
+        var requestName = typeof(TRequest).Name;
+        _logger.LogInformation("Başlatılıyor: {RequestName}", requestName);
+
+        try
+        {
+            var response = await next();
+            _logger.LogInformation("Tamamlandı: {RequestName}", requestName);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Hata: {RequestName}", requestName);
+            throw;
+        }
+    }
+}
