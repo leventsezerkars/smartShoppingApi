@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="smartShoppingProject.Api/smartShoppingProject.Api.csproj" Id="b52207f1-c1bc-4bb4-af71-ddf0478d5dcd" />
+  <Project Path="smartShoppingProject.Application/smartShoppingProject.Application.csproj" Id="db7f13da-24d3-415b-9f19-b7d79dc440d1" />
+  <Project Path="smartShoppingProject.Domain/smartShoppingProject.Domain.csproj" Id="e922e1aa-411f-4cae-9006-2d5df24c807e" />
+  <Project Path="smartShoppingProject.Infrastructure/smartShoppingProject.Infrastructure.csproj" Id="c5058e81-42c3-45d0-894d-066787ecaa37" />
+  <Project Path="smartShoppingProject.Shared/smartShoppingProject.Shared.csproj" Id="240c00ef-65aa-4ab3-a395-d0808c9bf720" />
+</Solution>

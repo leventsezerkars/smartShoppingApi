@@ -1,0 +1,6 @@
+@smartShoppingProject.Api_HostAddress = http://localhost:5182
+
+GET {{smartShoppingProject.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
