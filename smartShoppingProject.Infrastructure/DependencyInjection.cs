@@ -6,12 +6,14 @@ using Microsoft.Extensions.DependencyInjection;
 using MassTransit;
 using smartShoppingProject.Application.Abstractions.Logging;
 using smartShoppingProject.Application.Abstractions.Messaging;
+using smartShoppingProject.Application.Abstractions.Notifications;
 using smartShoppingProject.Application.Abstractions.Persistence;
 using smartShoppingProject.Application.Abstractions.Repositories;
-using smartShoppingProject.Domain.Entities;
 using smartShoppingProject.Infrastructure.BackgroundServices;
 using smartShoppingProject.Infrastructure.Logging;
 using smartShoppingProject.Infrastructure.Messaging;
+using smartShoppingProject.Infrastructure.Notifications;
+using smartShoppingProject.Infrastructure.Notifications.Options;
 using smartShoppingProject.Infrastructure.Persistence;
 using smartShoppingProject.Infrastructure.Persistence.Repositories;
 
@@ -42,9 +44,29 @@ public static class DependencyInjection
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IBusinessLogger, BusinessLogger>();
 
+        ConfigureNotifications(services, configuration);
+
         services.AddHostedService<OutboxMessageProcessor>();
 
         return services;
+    }
+
+    private static void ConfigureNotifications(IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<MailSenderOptions>(configuration.GetSection(MailSenderOptions.SectionName));
+        services.Configure<SmsSenderOptions>(configuration.GetSection(SmsSenderOptions.SectionName));
+        services.Configure<DiscordSenderOptions>(configuration.GetSection(DiscordSenderOptions.SectionName));
+        services.Configure<SlackSenderOptions>(configuration.GetSection(SlackSenderOptions.SectionName));
+        services.Configure<WhatsAppSenderOptions>(configuration.GetSection(WhatsAppSenderOptions.SectionName));
+
+        services.AddHttpClient();
+
+        services.AddScoped<INotificationSender, MailNotificationSender>();
+        services.AddScoped<INotificationSender, SmsNotificationSender>();
+        services.AddScoped<INotificationSender, DiscordNotificationSender>();
+        services.AddScoped<INotificationSender, SlackNotificationSender>();
+        services.AddScoped<INotificationSender, WhatsAppNotificationSender>();
+        services.AddScoped<INotificationService, NotificationService>();
     }
 
     private static void ConfigureEventBus(IServiceCollection services, IConfiguration configuration)
